@@ -6,15 +6,20 @@ import javax.swing.*;
 import java.awt.*;
 
 public class FilterWindow extends JFrame {
+    static Filter filterToApply;
+
+
+
     public FilterWindow(Filter filter){
+        filterToApply = filter;
         setBounds(200,200,550,150);
-        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         JPanel mainContentView = new JPanel();
         mainContentView.setLayout(new BorderLayout());
 
-        /**
-         * Left part of the filter view
-         */
+        /*
+        Left part of the filter view
+        */
         JPanel leftView = new JPanel();
         leftView.setLayout(new BorderLayout());
         JCheckBox jcSkipRecords = new JCheckBox("Skip Records?");
@@ -30,9 +35,9 @@ public class FilterWindow extends JFrame {
         leftView.add(jcLimitDistance,BorderLayout.SOUTH);
         mainContentView.add(leftView,BorderLayout.WEST);
 
-        /**
-         * Middle part of the filter view
-         */
+        /*
+        Middle part of the filter view
+        */
         JPanel centerView = new JPanel();
         JLabel lblRecordSkip = new JLabel("Number of records to skip: ");
         JPanel jpmiddle = new JPanel();
@@ -76,16 +81,16 @@ public class FilterWindow extends JFrame {
         mainContentView.add(rightCenter,BorderLayout.EAST);
 
 
-        /**
-         * Setting up filter view values
-         */
-        jcSkipRecords.setSelected(filter.isSkipRecords());
-        jcFilterByPayment.setSelected(filter.isFilterByPaymentType());
-        jcLeaveRecords.setSelected(filter.isLeaveRecords());
-        jcLimitDistance.setSelected(filter.isLimitDistance());
-        tfLeave.setText(String.valueOf(filter.getHowManyToLeave()));
-        tfSkip.setText(String.valueOf(filter.getHowManyToSkip()));
-        switch (filter.getPaymentType()){
+        /*
+        Setting up filter view values when initiating view
+        */
+        jcSkipRecords.setSelected(filterToApply.isSkipRecords());
+        jcFilterByPayment.setSelected(filterToApply.isFilterByPaymentType());
+        jcLeaveRecords.setSelected(filterToApply.isLeaveRecords());
+        jcLimitDistance.setSelected(filterToApply.isLimitDistance());
+        tfLeave.setText(String.valueOf(filterToApply.getHowManyToLeave()));
+        tfSkip.setText(String.valueOf(filterToApply.getHowManyToSkip()));
+        switch (filterToApply.getPaymentType()){
             case 0: jrbCash.setSelected(true);
                     break;
             case 1: jrbCard.setSelected(true);
@@ -93,6 +98,51 @@ public class FilterWindow extends JFrame {
             default: jrbUnknown.setSelected(true);
                     break;
         }
+        switch (filter.getDistanceOperator()){
+            case 0: dropDown.setSelectedIndex(0);
+                    break;
+            default: dropDown.setSelectedIndex(1);
+                     break;
+        }
+        tfDistance.setText(String.valueOf(filterToApply.getDistance()));
+        tfLeave.setText(String.valueOf(filterToApply.getHowManyToLeave()));
+        tfSkip.setText(String .valueOf(filterToApply.getHowManyToSkip()));
+
+        /*
+        Setting up returning filter values to the main window
+         */
+        jcSkipRecords.addActionListener(e -> {
+            filterToApply.setSkipRecords(jcSkipRecords.isSelected());
+            filterToApply.setHowManyToSkip(Integer.valueOf(tfSkip.getText()));
+            jcLeaveRecords.setSelected(false);
+            filterToApply.setLeaveRecords(false);
+        });
+        jcFilterByPayment.addActionListener(e ->{
+            filterToApply.setFilterByPaymentType(jcFilterByPayment.isSelected());
+        });
+        jcLeaveRecords.addActionListener(e -> {
+            filterToApply.setLeaveRecords(jcLeaveRecords.isSelected());
+            filterToApply.setHowManyToLeave(Integer.valueOf(tfLeave.getText()));
+            jcSkipRecords.setSelected(false);
+            filterToApply.setSkipRecords(false);
+
+        });
+        jcLimitDistance.addActionListener(e -> {
+            filterToApply.setLimitDistance(jcLimitDistance.isSelected());
+            filterToApply.setDistance(Double.valueOf(tfDistance.getText()));
+            filterToApply.setDistanceOperator(dropDown.getSelectedIndex());
+        });
+
+        jrbCard.addActionListener(e -> {
+            filterToApply.setPaymentType(1);
+        });
+        jrbCash.addActionListener(e -> {
+            filterToApply.setPaymentType(0);
+        });
+        jrbUnknown.addActionListener(e -> {
+            filterToApply.setPaymentType(2);
+        });
+
 
 
         add(mainContentView);
@@ -100,7 +150,9 @@ public class FilterWindow extends JFrame {
             //pack();
             setVisible(true);
         });
-
-
     }
+
+        public static Filter getFilter(){
+            return filterToApply;
+        }
 }

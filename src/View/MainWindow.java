@@ -49,24 +49,32 @@ public class MainWindow extends JFrame {
         tfLogger.setForeground(Color.gray);
         tfLogger.setEditable(false);
         tfLogger.setRows(4);
-        mainContentView.add(tfLogger,BorderLayout.SOUTH);
+        JScrollPane jsBotton = new JScrollPane(tfLogger);
+
+        mainContentView.add(jsBotton,BorderLayout.SOUTH);
 
         /**
          * Adding actions
          */
         jbLoad.addActionListener(e -> {
             jbLoad.setEnabled(false);
+            jbDefineFilter.setEnabled(false);
+            jbApplyFilter.setEnabled(false);
             String dataLoadMessage;
             String path = tfSearchBar.getText();
             try{
                 allRides.setPath(path);
                 taxiRides.update(allRides.getAllTaxiTrips());
                 dataLoadMessage = "Successfully added all taxi rides.";
+                System.out.println(allRides.getAllTaxiTrips().size());
             }
             catch (Exception e1){
-                dataLoadMessage = "Error whilst loading taxi rides";
+                dataLoadMessage = "Error occurred while loading taxi rides";
+                e1.printStackTrace();
             }
             jbLoad.setEnabled(true);
+            jbDefineFilter.setEnabled(true);
+            jbApplyFilter.setEnabled(true);
 
             tfLogger.append(dataLoadMessage + "\n");
 
@@ -75,9 +83,39 @@ public class MainWindow extends JFrame {
             new FilterWindow(filter);
         });
         jbExit.addActionListener(e -> System.exit(0));
+        jbApplyFilter.addActionListener(e -> {
+            filter = FilterWindow.getFilter();
+            tfLogger.append("Obtained filter from filter selection view\n");
+            tfLogger.append(filter.toString());
+            allRides.setFilterPresent(true);
+            allRides.setTripFilter(filter);
+
+            jbLoad.setEnabled(false);
+            jbDefineFilter.setEnabled(false);
+            jbApplyFilter.setEnabled(false);
+            String dataLoadMessage;
+            String path = tfSearchBar.getText();
+            try{
+                allRides.setPath(path);
+                taxiRides.update(allRides.getAllTaxiTrips());
+                dataLoadMessage = "Successfully added all taxi rides.";
+                System.out.println(allRides.getAllTaxiTrips().size());
+            }
+            catch (Exception e1){
+                dataLoadMessage = "Error occurred while loading taxi rides";
+                e1.printStackTrace();
+            }
+            jbLoad.setEnabled(true);
+            jbDefineFilter.setEnabled(true);
+            jbApplyFilter.setEnabled(true);
+
+            tfLogger.append(dataLoadMessage + "\n");
+        });
 
         add(mainContentView);
     }
+
+
 
     public static void main(String[] args){
         SwingUtilities.invokeLater(() -> {

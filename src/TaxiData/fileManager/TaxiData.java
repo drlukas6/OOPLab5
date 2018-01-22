@@ -1,7 +1,5 @@
-package fileManager;
+package TaxiData.fileManager;
 
-
-import java.util.Date;
 
 public class TaxiData {
     private int rowNumber;

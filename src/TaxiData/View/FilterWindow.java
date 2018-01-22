@@ -1,6 +1,6 @@
-package View;
+package TaxiData.View;
 
-import fileManager.Filter;
+import TaxiData.fileManager.Filter;
 
 import javax.swing.*;
 import java.awt.*;

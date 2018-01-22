@@ -1,12 +1,13 @@
-package View;
+package TaxiData.View;
 
-import Libraries.GenericTablePanel;
-import fileManager.Filter;
-import fileManager.TaxiData;
-import fileManager.TaxiDataTableFiller;
+import TaxiData.Libraries.GenericTablePanel;
+import TaxiData.fileManager.Filter;
+import TaxiData.fileManager.TaxiData;
+import TaxiData.fileManager.TaxiDataTableFiller;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Scanner;
 
 public class MainWindow extends JFrame {
     Filter filter;
@@ -123,5 +124,6 @@ public class MainWindow extends JFrame {
             mainWindow.pack();
             mainWindow.setVisible(true);
         });
+
     }
 }
